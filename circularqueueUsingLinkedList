@@ -1,0 +1,104 @@
+#include<stdio.h>
+#include<stdlib.h>
+struct node 
+{
+    int data;
+    struct node *next;
+};
+struct node *front;
+struct node *rear;
+void enqueue();
+void dequeue();
+void display();
+int main()
+{
+    int choice;
+    while(1)
+    {
+        printf("*MENU*\n");
+        printf("============\n");
+        printf("1.enqueue\n2.dequeue\n3.dispaly\n4.exit\n");
+        printf("enter the choice to perform\n");
+        scanf("%d",&choice);
+        switch(choice)
+        {
+            case 1:enqueue();
+            break;
+            case 2:dequeue();
+            break;
+            case 3:display();
+            break;
+            case 4:exit(0);
+            default:printf("invalid entry\n");
+        }
+    }
+}
+void enqueue()
+{
+    int item;
+    struct node *ptr;
+    ptr=(struct node *)malloc(sizeof(struct node));
+    if(ptr==NULL)
+    {
+        printf("overflow\n");
+    }
+    else
+    {
+        printf("enter the element to be inserted\n");
+        scanf("%d",&item);
+        if(front==NULL&&rear==NULL)
+        {
+            ptr->data=item;
+            front=rear=ptr;
+            ptr->next=front;
+        }
+        else
+        {
+            ptr->data=item;
+            rear->next=ptr;
+            rear=ptr;
+            rear->next=front;
+        }
+    }
+}
+void dequeue()
+{
+    struct node *ptr;
+    if(front==NULL&&rear==NULL)
+    {
+        printf("underflow\n");
+    }
+    else
+    {
+        if(front==rear)
+        {
+            front=NULL;
+            rear=NULL;
+        }
+        else
+        {
+            ptr=front;
+            front=front->next;
+            free(ptr);  
+            rear->next=front;
+        }
+    }
+}
+void display()
+{
+    struct node *ptr;
+    ptr=front;
+    if(front==NULL&&rear==NULL)
+    {
+        printf("queue is empty\n");
+    }
+    else
+    {
+     printf("elements present in the queue are\n");
+     do
+     {
+        printf("%d\n",ptr->data);
+        ptr=ptr->next;
+     }while(ptr!=front);
+    }
+}
