@@ -3,13 +3,11 @@
 
 #define MAX_SIZE 5
 
-// Define the structure of the circular queue
 struct CircularQueue {
     int front, rear;
     int items[MAX_SIZE];
 };
 
-// Function to create an empty circular queue
 struct CircularQueue* createCircularQueue() {
     struct CircularQueue* newQueue = (struct CircularQueue*)malloc(sizeof(struct CircularQueue));
     newQueue->front = -1;
@@ -17,17 +15,14 @@ struct CircularQueue* createCircularQueue() {
     return newQueue;
 }
 
-// Function to check if the circular queue is empty
 int isEmpty(struct CircularQueue* queue) {
     return (queue->front == -1 && queue->rear == -1);
 }
 
-// Function to check if the circular queue is full
 int isFull(struct CircularQueue* queue) {
     return ((queue->rear+1) % MAX_SIZE == queue->front);
 }
 
-// Function to add an element to the rear of the circular queue
 void enqueue(struct CircularQueue* queue, int data) {
     if (isFull(queue)) {
         printf("Circular queue is full.\n");
@@ -40,7 +35,6 @@ void enqueue(struct CircularQueue* queue, int data) {
     }
 }
 
-// Function to remove an element from the front of the circular queue
 int dequeue(struct CircularQueue* queue) {
     int deletedData = -1;
     if (isEmpty(queue)) {
@@ -55,7 +49,6 @@ int dequeue(struct CircularQueue* queue) {
     return deletedData;
 }
 
-// Function to display the elements in the circular queue
 void display(struct CircularQueue* queue) {
     if (isEmpty(queue)) {
         printf("Circular queue is empty.\n");
@@ -69,20 +62,40 @@ void display(struct CircularQueue* queue) {
     }
 }
 
-// Main function
 int main() {
     struct CircularQueue* queue = createCircularQueue();
-    enqueue(queue, 10);
-    enqueue(queue, 20);
-    enqueue(queue, 30);
-    display(queue);
-    printf("Deleted element: %d\n", dequeue(queue));
-    printf("Deleted element: %d\n", dequeue(queue));
-    display(queue);
-    enqueue(queue, 40);
-    enqueue(queue, 50);
-    display(queue);
-    printf("Deleted element: %d\n", dequeue(queue));
-    display(queue);
+    int choice, data;
+
+    while (1) {
+        printf("\nCircular Queue Menu:\n");
+        printf("1. Enqueue\n");
+        printf("2. Dequeue\n");
+        printf("3. Display\n");
+        printf("4. Exit\n");
+        printf("Enter your choice: ");
+        scanf("%d", &choice);
+
+        switch (choice) {
+            case 1:
+                printf("Enter data to enqueue: ");
+                scanf("%d", &data);
+                enqueue(queue, data);
+                break;
+            case 2:
+                data = dequeue(queue);
+                if (data != -1) {
+                    printf("Deleted element: %d\n", data);
+                }
+                break;
+            case 3:
+                display(queue);
+                break;
+            case 4:
+                exit(0);
+            default:
+                printf("Invalid choice.\n");
+        }
+    }
+
     return 0;
 }
