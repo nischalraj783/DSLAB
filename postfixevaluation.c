@@ -1,60 +1,67 @@
-#include<stdio.h> //standard Input Output header file
-int stack[20]; //implementation of stack
-int top = -1; //to check if stack is empty 
-void push(int x) //function to perform push operation
+#include<stdio.h>
+#include<string.h> 
+#include<ctype.h> 
+ 
+int stack[50];
+int top=-1;
+void push(int item)
 {
-        stack[++top] = x;//incrementation of top
+ stack[++top]=item; 
 }
-int pop()//function to perform pop operation
+char pop() 
 {
-        return stack[top--];//decrementation of top
+ return stack[top--]; 
 }
-int main()//main function
+int isoperator(char symbol)
 {
- 	  	char exp[20];//initializing expression size
-   		 char *p;//initializing pointer to save address
-  		  int a1,a2,a3,num;//declaring operands and num
- 		   printf("Enter the expression :\n ");//printing statement
-  		  scanf("%s",exp);//assigning the value in exp
-   		 p = exp;
-    while(*p != '\0')	//checks for null character that indicates end of string.
-   	 {
-        		if(isdigit(*p))//checks if the pointer p is pointing to a number 
-        {
-            num = *p - 48;//ascii conversion 
-            push(num);
-        }
-        else
-        {
-            a1 = pop();
-            a2 = pop();
-            switch(*p)//switch statement for respective operation 
-            {
-            case '+':// performs addition 
-        	    {
-               	 a3 = a1 + a2;
-               	 break;
-            }
-            case '-':// performs subtraction 
-           	 {
-            	    a3 = a2 - a1;
-             	   break;
-          		  }
-            case '*'://performs multiplication
-           	 {
-             	   a3 = a1 * a2;
-             	   break;
-          		  }
-           case '/'://performs division
-       	     {
-              	  a3 = a2 / a1;
-              	  break;
-          	  }
-            }
-            push(a3);
-   	     }
-        p++; //incrementing pointer variable
+    switch(symbol){
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '^':
+            return 1;
+            break;
+    default:return 0;
+            break;
+}
+}
+int evaluate(char postfix[])
+{
+  char symbol;
+  int op1,op2;
+  int i=0;
+  for(i=0;i<strlen(postfix);i++)
+  {
+    symbol=postfix[i];
+    if(isoperator(symbol)==0)
+    {
+     push(symbol-'0'); 
     }
-    printf("\nThe result of expression %s = %d\n\n",exp,pop());//printing statement
-    return 0;
+    else
+    {
+      op2=pop(); 
+      op1=pop();
+      switch(symbol)
+      {
+       case '+': push(op1+op2);
+           break; 
+       case '-': push(op1-op2);
+           break; 
+       case '*': push(op1*op2);
+           break; 
+       case '/': push(op1/op2);
+           break; 
+       case '^': push(op1^op2);
+           break;
+      }
+    }
+  }
+  return stack[top];
 }
+void main()
+{
+ char postfix[30]="123*+"; 
+ printf("The postfix expression is %s \n",postfix);
+ printf("Evaluation of postfix expression is %d \n",evaluate(postfix)); 
+} 
