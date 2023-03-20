@@ -1,63 +1,119 @@
-//Conversion of an expression from infix to postfix expression
 #include<stdio.h>
-#include<ctype.h>
-char stack[25];
-int top = -1;
-void push(char x) //function to push an element to the stack
+#include<stdlib.h>
+
+char stack[30];
+int top=-1;
+
+void push(char value)
 {
-    stack[++top] = x;
+    stack[++top]=value;
 }
-char pop() //function to remove an element from the stack
+char pop()
 {
-    if(top == -1)
-        return -1;
-    else
-        return stack[top--];
+    return stack[top--];
 }
-int priority(char x)            // A utility function to return precedence of a given operator
-                                        // Higher returned value means
-{                                       // higher precedence
-    if(x == '(')
-        return 0;
-    if(x == '+' || x == '-')
-        return 1;
-    if(x == '*' || x == '/')
-        return 2;
-    return 0;
-}
-int main() //Declaring main function
+int precedence(char symbol)
 {
-    char exp[35];
-    char *e, x;
-    printf("Enter the expression \n ");
-    scanf("%s",exp);
-    printf("\n");
-    e = exp;
-    while(*e != '\0') 
+    switch(symbol)
     {
-        if(isalnum(*e))  // If the scanned character is an operand, print it
-            printf("%c ",*e);
-        else if(*e == '(') // If the scanned character is an ‘(‘, push it to the stack.
-            push(*e);
-        else if(*e == ')')  // If the scanned character is an ‘)’,
-                            // pop and output from the stack
-                             // until an ‘(‘ is encountered.
+        case '+':
+        case '-':
+            return 2;
+            break;
+        case '*':
+        case '/':
+            return 3;
+            break;
+        case '^':
+            return 4;
+            break;
+        case '(':
+        case ')':
+        case '#':
+            return 1;
+            break;
+            
+    }
+}
+int isoperator(char symbol)
+{
+    switch(symbol){
+    case '+':
+    case '-':
+    case '*':
+    case '/':
+    case '^':
+    case '(':
+    case ')':
+    case '#':
+            return 1;
+            break;
+    default:return 0;
+            break;
+}
+}
+void convert(char infix[],char postfix[])
+{
+    int i,j=0,symbol;
+    stack[++top]='#';
+    for(i=0;i<strlen(infix);i++)
+    {
+        symbol=infix[i];
+        if(isoperator(symbol)==0)
         {
-            while((x = pop()) != '(')
-                printf("%c ", x);
-        } 
-        else  // an operator is encountered
-        {
-            while(priority(stack[top]) >= priority(*e))
-                printf("%c ",pop());
-            push(*e);
+            postfix[j]=symbol;
+            j++;
         }
-        e++;
+        else
+        {
+            if(symbol=='(')
+            {
+                push(symbol);
+            }
+            else
+            {
+               if(symbol==')')
+               {
+                   while(stack[top]!='(')
+                   {
+                       postfix[j]=pop();
+                       j++;
+                   }
+                   pop();
+               }
+               else
+               {
+                  if(precedence(symbol)>precedence(stack[top]))
+                  {
+                      push(symbol);
+                  }
+                  else
+                  {
+                      while(precedence(symbol)<=precedence(stack[top])) 
+                      {
+                           postfix[j]=pop();
+                           j++;
+                      }
+                      push(symbol);
+                   }
+               }
+            }
+        }
+            
     }
-     while(top != -1)    // pop all the operators from the stack
-    {
-        printf("%c ",pop());
-    }
-    return 0;
-    printf("\n");
+while(stack[top]!='#')
+{
+    postfix[j]=pop();
+    j++;
 }
+postfix[j]='\0';
+}
+void main()
+{
+    char infix[40],postfix[40];
+    printf("\n Enter postfix expression");
+    scanf("%s",infix);
+    convert(infix,postfix);
+    printf("%s",postfix);
+}
+    
