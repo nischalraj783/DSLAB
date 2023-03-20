@@ -1,110 +1,150 @@
-// Conversion of expression from infix to prefix expression
-#include<stdio.h>
-#include<ctype.h>
-#include<string.h>
-#define max 25
-int top=-1;
-char stack[50];
-void push(char x)  // Push function here, inserts value in stack and increments stack top by 1
-{
-    stack[++top]=x;
-}
+#include <stdio.h>//standard input output
+#include <string.h>
+#define MAX 25//defining size of MAX is 25
+char infix[MAX], prefix[MAX];//initializing infix,prefix and stack 
 
-char pop()  // Function to remove an item from stack.  It decreases top by 1 
+void reverse(char array[])
 {
-    if(top==-1)     // checking is stack is empty
-        return -1;
-    else
-        return stack[top--];
-}
-int priority(char x) // Function to compare precedence If we return larger value means higher precedence 
-{
-    if(x=='(')
-        return 0;
-    if(x=='+'||x=='-')
-        return 1;
-    if (x=='*'||x=='/')
-        return 2;
-    if(x=='^'||x=='$')
-        return 3;
-    return 0;
-}
-void reverse(char *exp)  // reverse string
-{ 
-    int size = strlen(exp);
-    char temp[size];
-    temp[size--]='\0';
-    int i=0;
-    while(exp[i]!='\0') 
+    char temp[30];
+    int i,j=-1;
+    for(i=0;i<strlen(array);i++)
     {
-        temp[size]=exp[i];
-        i++;
-        size--;
+        temp[i]=array[i];
+        ++j;
     }
-    strcpy(exp,temp);
-}
-
-void brackets(char *exp)   //change brackets
-{
-    int i=0;
-    while(exp[i]!='\0')
+    for(i=0;i<strlen(array);i++)
     {
-        if(exp[i]==')')
-            exp[i]='(';
-        else if(exp[i]=='(')
-            exp[i]=')';
-        i++;
+        array[i]=temp[j];
+        --j;
+    }
+    array[++i]='\0';
+}
+void paren(char arr[])
+{
+    int k;
+    for(k=0;k<strlen(arr);k++)
+    {
+        if(arr[k]=='(')
+        {
+            arr[k]=')';
+        }
+        else if(arr[k]==')')
+        {
+            arr[k]='(';
+        }
     }
 }
 
-void postfix(char *exp)  // The driver function for infix to postfix conversion 
-{
-    char temp,postfix[50];
-    int j=0,i=0;
-    temp=exp[i];
-    char x;
-    while(exp[i]!='\0') 
-    {
-        temp=exp[i];
-        if(isalnum(temp))  // If the scanned character is an operand, store it
-                postfix[j++]=temp;
-       else if (temp=='(')  // If the scanned character is an ‘(‘, push it to the stack.
-            push(temp);
-        else if (temp==')') // If the scanned character is an ‘)’ , pop and output from the stack  until an ‘(‘ is encountered.
+char stack[25]; 
+int top = -1; 
 
-        {
-            while((x=pop())!='(')
-                postfix[j++]=x;
-        } 
-        else   // an operator is encountered
-        {
-            while(priority(stack[top])>=priority(temp))
-                postfix[j++]=pop();
-                push(temp);
+void push(char item) {
+   stack[++top] = item; 
+} 
+
+char pop() {
+   return stack[top--]; 
+} 
+
+//returns precedence of operators
+int precedence(char symbol) {
+
+   switch(symbol) {
+      case '+': 
+      case '-':
+         return 2; 
+         break; 
+      case '*': 
+      case '/':
+         return 3; 
+         break; 
+      case '^': 
+         return 4; 
+         break; 
+      case '(': 
+      case ')': 
+      case '#':
+         return 1; 
+         break; 
+   } 
+} 
+
+//check whether the symbol is operator?
+int isOperator(char symbol) {
+
+   switch(symbol) {
+      case '+': 
+      case '-': 
+      case '*': 
+      case '/': 
+      case '^': 
+      case '(': 
+      case ')':
+         return 1; 
+      break; 
+         default:
+         return 0; 
+   } 
+} 
+
+//converts infix expression to postfix
+void convert(char infix[],char postfix[]) {
+   int i,symbol,j = 0; 
+   stack[++top] = '#'; 
+	
+   for(i = 0;i<strlen(infix);i++) {
+      symbol = infix[i]; 
+		
+      if(isOperator(symbol) == 0) {
+         postfix[j] = symbol; 
+         j++; 
+      } else {
+         if(symbol == '(') {
+            push(symbol); 
+         } else {
+            if(symbol == ')') {
+				
+               while(stack[top] != '(') {
+                  postfix[j] = pop(); 
+                  j++; 
+               } 
+					
+               pop();   //pop out (. 
+            } else {
+               if(precedence(symbol)>precedence(stack[top])) {
+                  push(symbol); 
+               } else {
+					
+                  while(precedence(symbol)<=precedence(stack[top])) {
+                     postfix[j] = pop(); 
+                     j++; 
+                  } 
+						
+                  push(symbol); 
+               }
+            }
          }
-        i++;
-    }
-    while(top!=-1)
-    {
-        postfix[j++]=pop();
-    }
-    postfix[j]='\0';
-    strcpy(exp,postfix);
-}
-
-void InfixtoPrefix(char *exp) //function converting infix to prefix
+      }
+   }
+	
+   while(stack[top] != '#') {
+      postfix[j] = pop(); 
+      j++; 
+   } 
+	
+   postfix[j]='\0';  //null terminate string. 
+} 
+void main()//main function
 {
-    reverse(exp);
-    brackets(exp);
-    postfix(exp);
-    reverse(exp);
-}
-int main()
-{
-    char exp[50];
-    printf("Enter the expression");
-    scanf("%s",exp);
-    InfixtoPrefix(exp);
-    printf("%s",exp);
-    return 0;
+   printf("Enter the infix expression:");
+   gets(infix);//to take input of infix expression
+   reverse(infix);//reverse the infix expression
+    paren(infix);
+   convert(infix,prefix);
+   reverse(prefix);//function to convert infix to prefix
+   printf("Prefix Expression is: ");
+   for (int i = 0; i < MAX + 1; i++)
+   {
+       printf("%c", prefix[i]);
+   }
 }
