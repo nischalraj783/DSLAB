@@ -111,7 +111,7 @@ postfix[j]='\0';
 void main()
 {
     char infix[40],postfix[40];
-    printf("\n Enter postfix expression");
+    printf("\n Enter infix expression");
     scanf("%s",infix);
     convert(infix,postfix);
     printf("%s",postfix);
