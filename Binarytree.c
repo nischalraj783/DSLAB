@@ -1,73 +1,53 @@
-#include <stdio.h>//
+#include <stdio.h>
 #include <stdlib.h>
-
-struct node {
-  int item;
-  struct node* left;
-  struct node* right;
+struct node{
+	int data ;
+	struct node *left ;
+	struct node *right ;
 };
-
-void inorderTraversal(struct node* root) {// Inorder traversal
-  if (root == NULL)
- return;
-inorderTraversal(root->left);
-printf("%d ", root->item);
-inorderTraversal(root->right);
+struct node* maketree(){
+	struct node *p ;
+	int info ;
+	printf("Enter the info or -1 for null\n");
+	scanf("%d", &info) ;
+	if(info == -1) return NULL ;
+	p = (struct node *)malloc(sizeof(struct node)) ;
+	p->data = info ;
+	printf("Enter the left child of %d\n",info );
+	p->left = maketree() ;
+	printf("Enter the right child of %d\n",info );
+	p->right = maketree() ;
+	return p ;
 }
-
-void preorderTraversal(struct node* root) {// Preorder traversal
-  if (root == NULL) return;
-printf("%d ", root->item);
-preorderTraversal(root->left);
-preorderTraversal(root->right);
+void preorder(struct node *t){
+	if(t!=NULL){
+		printf("%d->", t->data) ;
+		preorder(t->left) ;
+		preorder(t->right) ;
+	}
 }
-
-void postorderTraversal(struct node* root) {// Postorder traversal
-  if (root == NULL) return;
-postorderTraversal(root->left);
-postorderTraversal(root->right);
-printf("%d ", root->item);
+void postorder(struct node *t){
+	if(t!=NULL){
+		postorder(t->left) ;
+		postorder(t->right) ;
+		printf("%d->", t->data) ;
+	}	
 }
-
-struct node* create(int value) {// Create a new Node
-  struct node* newNode = malloc(sizeof(struct node));
-newNode->item = value;
-newNode->left = NULL;
-newNode->right = NULL;
-
-  return newNode;
+void inorder(struct node *t){
+	if(t!=NULL){
+		inorder(t->left) ;
+		printf("%d->", t->data) ;
+		inorder(t->right) ;
+	}
 }
-
-// Insert on the left of the node
-struct node* insertLeft(struct node* root, int value) {
-  root->left = create(value);
-  return root->left;
-}
-
-// Insert on the right of the node
-struct node* insertRight(struct node* root, int value) {
-  root->right = create(value);
-  return root->right;
-}
-
-int main() {
-  struct node* root = create(1);
-insertLeft(root, 4);
-insertRight(root, 6);
-insertLeft(root->left, 42);
-insertRight(root->left, 3);
-insertLeft(root->right, 2);
-insertRight(root->right, 33);
-
-printf("Traversal of the inserted binary tree \n");
-printf("Inorder traversal \n");
-inorderTraversal(root);
-
-printf("\nPreorder traversal \n");
-preorderTraversal(root);
-
-
-printf("\nPostorder traversal \n");
-postorderTraversal(root);
-
+int main(){
+	struct node *root ;
+	root = maketree();
+	printf("Preorder: ");
+	preorder(root) ;
+	printf("\n Postorder :");
+	postorder(root) ;
+	printf("\n Inorder");
+	inorder(root) ;
+	return 0 ;
 }
